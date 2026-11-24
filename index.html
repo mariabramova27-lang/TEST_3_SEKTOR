@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест · Какая профессия третичного сектора — твоя?</title>
+<style>
+  :root{
+    --bg-1:#1a0a1e; --bg-2:#2a1228;
+    --coral:#ff6b6b; --coral-light:#ff9b9b; --coral-dark:#c92a2a; --coral-soft:#ffe3e3;
+    --teal:#14b8a6; --gold:#fbbf24; --blue:#3b82f6; --purple:#a855f7;
+    --card:#fff; --card-soft:#f8fafc;
+    --ink:#0f172a; --soft:#64748b; --line:#e2e8f0;
+    --ok:#10b981; --err:#ef4444;
+    --shadow-card:0 20px 50px rgba(0,0,0,.45);
+    --shadow-coral:0 10px 30px rgba(255,107,107,.4);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,-apple-system,'Nunito',sans-serif;
+    background:radial-gradient(ellipse at top left,#3d1a2e 0%,transparent 50%),
+      radial-gradient(ellipse at bottom right,#1a0a1e 0%,transparent 50%),
+      linear-gradient(180deg,var(--bg-1) 0%,var(--bg-2) 100%);
+    background-attachment:fixed; color:var(--ink); min-height:100vh; overflow-x:hidden}
+  #bgFX{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  #bgFX .bg-item{position:absolute;bottom:-20vh;display:block;opacity:0;
+    animation-name:rise;animation-timing-function:linear;animation-iteration-count:infinite;
+    filter:drop-shadow(0 4px 12px rgba(0,0,0,.4))}
+  @keyframes rise{0%{transform:translate3d(0,0,0) rotate(0deg);opacity:0}
+    8%{opacity:var(--op,.10)}92%{opacity:var(--op,.10)}
+    100%{transform:translate3d(var(--dx,0),-140vh,0) rotate(var(--rot,15deg));opacity:0}}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0}
+  .glow.g1{width:420px;height:420px;background:rgba(255,107,107,.12);top:-100px;left:-100px}
+  .glow.g2{width:380px;height:380px;background:rgba(20,184,166,.10);top:40%;right:-120px}
+  #fx{position:fixed;inset:0;pointer-events:none;z-index:150;overflow:hidden}
+  .particle{position:absolute;font-size:20px;animation:fall 1.5s linear forwards}
+  @keyframes fall{to{transform:translateY(115vh) rotate(540deg);opacity:0}}
+  .wrap{max-width:820px;margin:0 auto;padding:22px 16px 80px;position:relative;z-index:2}
+  header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .brand{display:flex;align-items:center;gap:12px;color:#fff}
+  .brand-logo{width:44px;height:44px;border-radius:13px;flex-shrink:0;
+    background:linear-gradient(135deg,var(--coral),var(--gold));
+    display:flex;align-items:center;justify-content:center;font-size:22px;
+    box-shadow:var(--shadow-coral);position:relative}
+  .brand-logo::after{content:"";position:absolute;inset:3px;border-radius:10px;
+    border:1.5px solid rgba(255,255,255,.4)}
+  .brand-text{display:flex;flex-direction:column;line-height:1.1}
+  .brand-text b{font-size:15px;color:#fff;font-weight:900}
+  .brand-text span{font-size:11.5px;font-weight:700;color:var(--coral-light);
+    letter-spacing:.5px;text-transform:uppercase}
+  .card{background:var(--card);border-radius:24px;box-shadow:var(--shadow-card);padding:30px;
+    position:relative;overflow:hidden;animation:pop .4s ease}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;
+    background:linear-gradient(90deg,var(--coral),var(--gold),var(--teal))}
+  @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .intro-hero{text-align:center;padding:10px 0 20px}
+  .intro-hero .ih-emoji{font-size:80px;display:inline-block;
+    animation:float 3s ease-in-out infinite;margin-bottom:10px;
+    filter:drop-shadow(0 10px 24px rgba(255,107,107,.35))}
+  .intro-hero h1{font-size:clamp(24px,4vw,32px);margin:8px 0 12px;letter-spacing:-.6px;
+    font-weight:900;line-height:1.2;color:var(--ink)}
+  .intro-hero h1 span{background:linear-gradient(135deg,var(--coral-dark),var(--gold));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .intro-hero p{font-size:15px;line-height:1.7;color:var(--soft);margin:0 auto;
+    max-width:540px;font-weight:500}
+  .intro-hero p b{color:var(--ink);font-weight:800}
+  .intro-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:12px;margin:24px 0}
+  .stat-card{background:linear-gradient(135deg,#f8fafc,#eef2f7);border:1px solid var(--line);
+    border-radius:14px;padding:16px 14px;text-align:center}
+  .stat-card .sc-emoji{font-size:28px;display:block;margin-bottom:6px}
+  .stat-card .sc-num{font-size:22px;font-weight:900;color:var(--ink);line-height:1}
+  .stat-card .sc-label{font-size:11px;font-weight:800;color:var(--soft);
+    letter-spacing:.5px;text-transform:uppercase;margin-top:6px}
+  .start-btn{width:100%;padding:18px 26px;font-family:inherit;font-weight:900;font-size:17px;
+    background:linear-gradient(135deg,var(--coral),var(--gold));color:#1a0a1e;border:none;
+    border-radius:16px;cursor:pointer;box-shadow:var(--shadow-coral);transition:.2s;
+    display:flex;align-items:center;justify-content:center;gap:10px}
+  .start-btn:hover{filter:brightness(1.08);transform:translateY(-2px)}
+  .start-btn:active{transform:scale(.98)}
+  .progress-row{display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:14px;font-size:12.5px;font-weight:800;color:var(--soft);letter-spacing:.3px}
+  .progress-row .pr-num{background:var(--coral-soft);color:var(--coral-dark);
+    padding:4px 12px;border-radius:999px;font-size:11.5px;font-weight:900}
+  .progress-bar{height:10px;background:#e2e8f0;border-radius:5px;overflow:hidden;margin-bottom:22px}
+  .progress-bar>div{height:100%;width:0;
+    background:linear-gradient(90deg,var(--coral),var(--gold));border-radius:5px;
+    transition:width .4s ease}
+  .question-emoji{font-size:56px;display:block;margin-bottom:14px;
+    filter:drop-shadow(0 6px 16px rgba(255,107,107,.25));animation:float 3s ease-in-out infinite}
+  .question-text{font-size:clamp(20px,3vw,24px);font-weight:900;color:var(--ink);
+    line-height:1.3;margin:0 0 22px;letter-spacing:-.3px}
+  .options{display:grid;gap:10px}
+  .option-btn{display:flex;align-items:center;gap:14px;padding:16px 18px;
+    background:linear-gradient(135deg,#f8fafc,#eef2f7);border:2px solid var(--line);
+    border-radius:14px;cursor:pointer;font-family:inherit;font-size:15px;
+    font-weight:700;color:var(--ink);text-align:left;transition:.2s;line-height:1.4}
+  .option-btn:hover{border-color:var(--coral);
+    background:linear-gradient(135deg,#fff5f5,#ffe3e3);transform:translateX(4px)}
+  .option-btn:active{transform:scale(.98)}
+  .option-btn .ob-letter{flex-shrink:0;width:36px;height:36px;border-radius:10px;
+    background:linear-gradient(135deg,var(--coral-dark),var(--coral));color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;
+    box-shadow:0 4px 10px rgba(201,42,42,.35)}
+  .option-btn .ob-text{flex:1}
+  .option-btn .ob-arrow{color:var(--coral-dark);font-weight:900;font-size:16px;
+    opacity:0;transition:.2s}
+  .option-btn:hover .ob-arrow{opacity:1;transform:translateX(2px)}
+  .back-row{margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .back-btn{padding:10px 18px;font-family:inherit;font-weight:800;font-size:13px;
+    background:transparent;color:var(--soft);border:1px solid var(--line);
+    border-radius:10px;cursor:pointer;transition:.2s}
+  .back-btn:hover:not(:disabled){background:#f1f5f9;color:var(--ink)}
+  .back-btn:disabled{opacity:.4;cursor:not-allowed}
+  .back-hint{font-size:12px;color:var(--soft);font-weight:600}
+  .result-hero{text-align:center;padding:8px 0 22px}
+  .result-hero .rh-medal{font-size:80px;display:inline-block;
+    animation:float 3s ease-in-out infinite;margin-bottom:10px;
+    filter:drop-shadow(0 12px 30px rgba(251,191,36,.5))}
+  .result-hero .rh-tag{display:inline-block;padding:6px 16px;background:var(--coral-soft);
+    color:var(--coral-dark);border-radius:999px;font-size:11.5px;font-weight:900;
+    letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+  .result-hero h2{font-size:clamp(26px,4vw,34px);margin:6px 0 8px;
+    letter-spacing:-.6px;font-weight:900;line-height:1.15;color:var(--ink)}
+  .result-hero .rh-prof{display:inline-block;
+    background:linear-gradient(135deg,var(--coral-dark),var(--gold));color:#fff;
+    padding:12px 26px;border-radius:14px;font-size:20px;font-weight:900;margin:8px 0;
+    box-shadow:var(--shadow-coral)}
+  .result-hero .rh-why{font-size:14.5px;line-height:1.65;color:var(--soft);
+    max-width:520px;margin:14px auto 0;font-weight:500}
+  .result-hero .rh-why b{color:var(--ink);font-weight:800}
+  .traits-row{margin:18px 0;padding:16px;background:linear-gradient(135deg,#fff5f5,#ffe3e3);
+    border-radius:14px;border-left:4px solid var(--coral)}
+  .traits-row .tr-title{font-size:12px;font-weight:900;letter-spacing:.5px;
+    text-transform:uppercase;color:var(--coral-dark);margin-bottom:10px}
+  .traits-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .trait-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;
+    background:#fff;border:1px solid var(--coral);border-radius:999px;
+    font-size:12.5px;font-weight:800;color:var(--coral-dark)}
+  .top-list{display:grid;gap:10px;margin:20px 0}
+  .top-item{background:linear-gradient(135deg,#f8fafc,#eef2f7);border:2px solid var(--line);
+    border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;
+    transition:.2s}
+  .top-item:hover{border-color:var(--coral);transform:translateX(2px)}
+  .top-item.first{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:var(--gold)}
+  .top-item .ti-medal{font-size:26px;flex-shrink:0;width:36px;text-align:center}
+  .top-item .ti-body{flex:1;min-width:0}
+  .top-item .ti-name{font-size:15px;font-weight:900;color:var(--ink);line-height:1.3;
+    margin-bottom:3px}
+  .top-item .ti-cat{font-size:11.5px;font-weight:700;color:var(--soft)}
+  .top-item .ti-bar{height:6px;background:#fff;border-radius:3px;margin-top:6px;
+    overflow:hidden;border:1px solid var(--line)}
+  .top-item .ti-bar>div{height:100%;
+    background:linear-gradient(90deg,var(--coral),var(--gold));border-radius:3px;
+    transition:width .6s ease}
+  .top-item .ti-percent{font-size:14px;font-weight:900;color:var(--coral-dark);flex-shrink:0}
+  .top-item .ti-detail{flex-shrink:0;padding:8px 14px;font-family:inherit;
+    font-weight:800;font-size:12px;background:var(--coral);color:#fff;
+    border:none;border-radius:10px;cursor:pointer;transition:.2s;white-space:nowrap}
+  .top-item .ti-detail:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .chart-section{margin:26px 0 18px;padding:20px;
+    background:linear-gradient(135deg,#f8fafc,#eef2f7);
+    border:1px solid var(--line);border-radius:18px}
+  .chart-title{font-size:13px;font-weight:900;letter-spacing:.5px;
+    text-transform:uppercase;color:var(--soft);margin-bottom:14px;
+    display:flex;align-items:center;gap:8px}
+  .chart-title::after{content:"";flex:1;height:1px;background:var(--line)}
+  .chart-rows{display:grid;gap:8px}
+  .chart-row{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;
+    padding:8px 10px;background:#fff;border:1px solid var(--line);border-radius:10px;
+    transition:.15s;cursor:pointer}
+  .chart-row:hover{border-color:var(--coral);box-shadow:0 4px 12px rgba(255,107,107,.15)}
+  .chart-row.first{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:var(--gold)}
+  .chart-row .cr-head{display:flex;align-items:center;gap:8px;font-size:13px;
+    font-weight:800;color:var(--ink);min-width:0}
+  .chart-row .cr-emoji{font-size:18px;flex-shrink:0}
+  .chart-row .cr-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .chart-row .cr-percent{font-size:12.5px;font-weight:900;color:var(--coral-dark);
+    grid-column:2;grid-row:1}
+  .chart-row .cr-bar-wrap{grid-column:1/-1;height:10px;background:#f1f5f9;
+    border-radius:5px;overflow:hidden;border:1px solid var(--line)}
+  .chart-row .cr-bar{height:100%;border-radius:5px;
+    transition:width .8s cubic-bezier(.2,.9,.3,1.2);
+    background:linear-gradient(90deg,var(--coral),var(--gold))}
+  .chart-row.cat-trade .cr-bar{background:linear-gradient(90deg,#a855f7,#7c3aed)}
+  .chart-row.cat-food .cr-bar{background:linear-gradient(90deg,#f97316,#ea580c)}
+  .chart-row.cat-transport .cr-bar{background:linear-gradient(90deg,#3b82f6,#1e40af)}
+  .chart-row.cat-tourism .cr-bar{background:linear-gradient(90deg,#14b8a6,#0f766e)}
+  .chart-row.cat-education .cr-bar{background:linear-gradient(90deg,#22c55e,#15803d)}
+  .chart-row.cat-medicine .cr-bar{background:linear-gradient(90deg,#ec4899,#be185d)}
+  .chart-row.cat-finance .cr-bar{background:linear-gradient(90deg,#eab308,#a16207)}
+  .chart-row.cat-entertainment .cr-bar{background:linear-gradient(90deg,#fb923c,#c2410c)}
+  .action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+  .action-row button{flex:1;min-width:140px;padding:14px 20px;font-family:inherit;
+    font-weight:800;font-size:14px;border-radius:13px;border:none;cursor:pointer;transition:.2s}
+  .btn-primary{background:linear-gradient(135deg,var(--coral),var(--gold));color:#1a0a1e;
+    box-shadow:var(--shadow-coral)}
+  .btn-primary:hover{filter:brightness(1.08);transform:translateY(-2px)}
+  .btn-secondary{background:var(--card-soft);color:var(--ink);border:1px solid var(--line)}
+  .btn-secondary:hover{background:#eef2f7}
+  .btn-print{background:linear-gradient(135deg,var(--purple),#7c3aed);color:#fff;
+    box-shadow:0 10px 26px rgba(168,85,247,.35)}
+  .btn-print:hover{filter:brightness(1.08);transform:translateY(-2px)}
+  .modal-overlay{position:fixed;inset:0;background:rgba(20,5,20,.85);backdrop-filter:blur(8px);
+    z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;
+    opacity:0;pointer-events:none;transition:.25s}
+  .modal-overlay.open{opacity:1;pointer-events:auto}
+  .modal{background:#fff;border-radius:24px;max-width:680px;width:100%;max-height:92vh;
+    overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,.7);transform:scale(.94);
+    transition:.28s cubic-bezier(.2,.9,.3,1.2)}
+  .modal-overlay.open .modal{transform:scale(1)}
+  .modal-head{padding:26px 28px 20px;position:relative;color:#fff;
+    border-radius:24px 24px 0 0;overflow:hidden}
+  .modal-head.cat-trade{background:linear-gradient(135deg,#7c3aed,#a855f7)}
+  .modal-head.cat-food{background:linear-gradient(135deg,#ea580c,#f97316)}
+  .modal-head.cat-transport{background:linear-gradient(135deg,#1e40af,#3b82f6)}
+  .modal-head.cat-tourism{background:linear-gradient(135deg,#0f766e,#14b8a6)}
+  .modal-head.cat-education{background:linear-gradient(135deg,#15803d,#22c55e)}
+  .modal-head.cat-medicine{background:linear-gradient(135deg,#be185d,#ec4899)}
+  .modal-head.cat-finance{background:linear-gradient(135deg,#a16207,#eab308)}
+  .modal-head.cat-entertainment{background:linear-gradient(135deg,#c2410c,#fb923c)}
+  .modal-head::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg,var(--gold),var(--coral));z-index:2}
+  .mh-emoji{font-size:52px;line-height:1;margin-bottom:10px;
+    filter:drop-shadow(0 6px 16px rgba(0,0,0,.3))}
+  .modal-head h2{margin:0;font-size:21px;font-weight:900;line-height:1.25}
+  .modal-head .mh-cat{display:inline-block;padding:3px 12px;border-radius:999px;
+    font-size:11px;font-weight:900;letter-spacing:.6px;text-transform:uppercase;margin-top:8px;
+    background:rgba(255,255,255,.2);color:#fff;backdrop-filter:blur(4px)}
+  .modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;
+    border:none;background:rgba(255,255,255,.18);color:#fff;font-size:18px;font-weight:900;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;z-index:3}
+  .modal-close:hover{background:rgba(255,255,255,.32);transform:rotate(90deg)}
+  .modal-body{padding:22px 26px 26px}
+  .m-section{margin-bottom:22px}
+  .m-section:last-child{margin-bottom:0}
+  .m-section-title{font-size:11.5px;font-weight:900;letter-spacing:1px;
+    text-transform:uppercase;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+  .m-section-title::after{content:"";flex:1;height:1px;
+    background:linear-gradient(90deg,currentColor,transparent);opacity:.3}
+  .m-section-title.icon-about{color:var(--coral-dark)}
+  .m-section-title.icon-track{color:#a16207}
+  .m-section-title.icon-feat{color:var(--blue)}
+  .m-section-title.icon-opp{color:var(--ok)}
+  .m-section-title.icon-risk{color:var(--err)}
+  .m-section-title.icon-fact{color:var(--purple)}
+  .m-desc{font-size:14px;line-height:1.65;color:var(--ink);font-weight:500;
+    background:linear-gradient(135deg,#fff5f5,#ffe3e3);padding:14px 16px;border-radius:12px;
+    border-left:4px solid var(--coral)}
+  .career-track{display:flex;gap:0;flex-wrap:nowrap;overflow-x:auto;padding:6px 0 12px}
+  .career-step{display:flex;flex-direction:column;align-items:center;gap:6px;
+    min-width:110px;flex:1;position:relative;text-align:center;padding:0 4px}
+  .career-step:not(:last-child)::after{content:"→";position:absolute;right:-8px;top:18px;
+    font-size:18px;color:var(--coral);font-weight:900}
+  .career-step .cs-num{width:40px;height:40px;border-radius:50%;
+    background:linear-gradient(135deg,var(--coral),var(--coral-dark));color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;
+    box-shadow:0 6px 14px rgba(255,107,107,.4)}
+  .career-step:nth-child(2) .cs-num{background:linear-gradient(135deg,#fbbf24,#d97706)}
+  .career-step:nth-child(3) .cs-num{background:linear-gradient(135deg,#3b82f6,#1e40af)}
+  .career-step:nth-child(4) .cs-num{background:linear-gradient(135deg,#a78bfa,#7c3aed)}
+  .career-step:nth-child(5) .cs-num{background:linear-gradient(135deg,#14b8a6,#0f766e)}
+  .career-step .cs-title{font-size:11.5px;font-weight:900;color:var(--ink);line-height:1.3}
+  .career-step .cs-years{font-size:10px;font-weight:700;color:var(--soft);
+    background:#f1f5f9;padding:2px 7px;border-radius:999px}
+  .salary-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+  .salary-card{background:linear-gradient(135deg,#f8fafc,#eef2f7);border-radius:11px;
+    padding:10px 8px;text-align:center;border:1px solid var(--line)}
+  .salary-card .sc-label{font-size:10px;font-weight:900;letter-spacing:.4px;
+    text-transform:uppercase;color:var(--soft);margin-bottom:3px}
+  .salary-card .sc-value{font-size:14px;font-weight:900;color:var(--coral-dark);line-height:1.2}
+  .salary-card .sc-sub{font-size:10px;color:var(--soft);font-weight:600;margin-top:2px}
+  .m-list{list-style:none;padding:0;margin:0;display:grid;gap:7px}
+  .m-list li{padding:10px 13px;border-radius:11px;font-size:13px;line-height:1.5;
+    font-weight:500;display:flex;gap:9px;align-items:flex-start}
+  .m-list li .ml-icon{flex-shrink:0;font-size:15px;line-height:1.4}
+  .m-list li .ml-text{flex:1}
+  .m-list li .ml-text b{font-weight:900}
+  .m-list.feat li{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-left:3px solid var(--blue)}
+  .m-list.feat li .ml-text b{color:#1e40af}
+  .m-list.opp li{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-left:3px solid var(--ok)}
+  .m-list.opp li .ml-text b{color:#166534}
+  .m-list.risk li{background:linear-gradient(135deg,#fef2f2,#fee2e2);border-left:3px solid var(--err)}
+  .m-list.risk li .ml-text b{color:#991b1b}
+  .fact-box{background:linear-gradient(135deg,#f3e8ff,#e9d5ff);padding:13px 16px;
+    border-radius:12px;border-left:4px solid var(--purple);font-size:13.5px;line-height:1.55;
+    color:#6b21a8;font-weight:600}
+  .fact-box b{font-weight:900;color:#6b21a8}
+  .print-modal .modal{max-width:720px}
+  .print-actions{display:flex;gap:10px;padding:16px 24px;border-bottom:1px solid var(--line);
+    background:#f8fafc;border-radius:24px 24px 0 0;flex-wrap:wrap}
+  .print-actions button{padding:10px 18px;font-family:inherit;font-weight:800;font-size:13px;
+    border-radius:10px;border:none;cursor:pointer;transition:.2s}
+  .print-actions .pa-print{background:linear-gradient(135deg,var(--coral),var(--gold));
+    color:#1a0a1e;box-shadow:0 6px 16px rgba(255,107,107,.3)}
+  .print-actions .pa-print:hover{filter:brightness(1.08)}
+  .print-actions .pa-close{background:#fff;color:var(--soft);border:1px solid var(--line)}
+  .print-actions .pa-close:hover{background:#f1f5f9;color:var(--ink)}
+  .memo-doc{padding:24px 28px 28px;background:#fff}
+  .memo-doc .memo-header{text-align:center;padding-bottom:16px;
+    border-bottom:3px double #000;margin-bottom:20px}
+  .memo-doc .memo-brand{font-size:11px;font-weight:900;letter-spacing:2px;
+    text-transform:uppercase;color:var(--coral-dark);margin-bottom:6px}
+  .memo-doc .memo-title{font-size:24px;font-weight:900;margin:0 0 4px;
+    letter-spacing:-.4px;color:#000}
+  .memo-doc .memo-sub{font-size:13px;color:#555;font-weight:600}
+  .memo-doc .memo-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;
+    margin:16px 0 20px;font-size:13px}
+  .memo-doc .memo-field{display:flex;gap:8px;align-items:baseline}
+  .memo-doc .memo-field .mf-label{font-weight:800;color:#555;white-space:nowrap}
+  .memo-doc .memo-field .mf-line{flex:1;border-bottom:1px solid #000;min-height:20px;
+    padding:0 4px;font-weight:700;color:#000}
+  .memo-doc .memo-field .mf-line input{width:100%;border:none;outline:none;
+    background:transparent;font-family:inherit;font-size:13px;font-weight:700;color:#000}
+  .memo-doc .memo-section-title{font-size:12px;font-weight:900;letter-spacing:1px;
+    text-transform:uppercase;color:#000;margin:22px 0 12px;padding-bottom:4px;
+    border-bottom:2px solid #000}
+  .memo-doc .memo-top-list{display:grid;gap:12px;margin-bottom:16px}
+  .memo-doc .memo-top-item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;
+    align-items:center;padding:14px 16px;border:2px solid #000;border-radius:12px;
+    background:#f9f9f9}
+  .memo-doc .memo-top-item.first{background:#fff8e1;border-color:#a06b12}
+  .memo-doc .memo-top-item .mti-medal{font-size:28px;line-height:1}
+  .memo-doc .memo-top-item .mti-body{min-width:0}
+  .memo-doc .memo-top-item .mti-name{font-size:16px;font-weight:900;color:#000;
+    line-height:1.2;margin-bottom:3px}
+  .memo-doc .memo-top-item .mti-cat{font-size:11.5px;color:#555;font-weight:600}
+  .memo-doc .memo-top-item .mti-why{font-size:12px;line-height:1.5;color:#333;
+    margin-top:6px;font-weight:500}
+  .memo-doc .memo-top-item .mti-percent{font-size:16px;font-weight:900;color:var(--coral-dark)}
+  .memo-doc .memo-traits{padding:12px 16px;background:#fff5f5;border:1px solid #ff9b9b;
+    border-radius:10px;font-size:12.5px;line-height:1.6;margin-bottom:16px}
+  .memo-doc .memo-traits b{color:var(--coral-dark)}
+  .memo-doc .memo-try{padding:14px 16px;background:#fff8e1;border:1px solid #fcd34d;
+    border-radius:10px;font-size:12.5px;line-height:1.6}
+  .memo-doc .memo-try .mtry-title{font-weight:900;font-size:12px;color:#a06b12;
+    margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+  .memo-doc .memo-try ul{list-style:none;padding:0;margin:0}
+  .memo-doc .memo-try li{padding:6px 0;border-bottom:1px dashed #fcd34d;
+    font-size:12.5px;line-height:1.5;color:#333;display:flex;gap:8px;align-items:flex-start}
+  .memo-doc .memo-try li:last-child{border-bottom:none}
+  .memo-doc .memo-try li::before{content:"→";color:#a06b12;font-weight:900;flex-shrink:0}
+  .memo-doc .memo-footer{margin-top:24px;padding-top:12px;border-top:1px dashed #999;
+    font-size:10.5px;color:#666;text-align:center;line-height:1.6}
+  .memo-doc .memo-footer b{color:var(--coral-dark);font-weight:900}
+  @media print{
+    @page{size:A4;margin:12mm}
+    body{background:#fff !important}
+    #bgFX,.glow,#fx,#toast,.wrap > header,.wrap > main,.wrap > .promo-line,
+    .modal-overlay:not(.print-overlay),.print-actions{display:none !important}
+    .modal-overlay.print-overlay{position:static !important;background:#fff !important;
+      padding:0 !important;opacity:1 !important;pointer-events:auto !important;
+      backdrop-filter:none !important}
+    .print-overlay .modal{max-width:none !important;width:100% !important;
+      box-shadow:none !important;border-radius:0 !important;max-height:none !important;
+      overflow:visible !important;transform:none !important}
+    .memo-doc{padding:0 !important}
+    .memo-doc .memo-top-item,.memo-doc .memo-try{page-break-inside:avoid;break-inside:avoid}
+  }
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(100px);
+    background:linear-gradient(135deg,var(--coral),var(--gold));color:#1a0a1e;
+    padding:14px 24px;border-radius:14px;font-weight:900;font-size:14px;
+    box-shadow:0 20px 50px rgba(255,107,107,.5);z-index:300;opacity:0;transition:.4s;
+    pointer-events:none;max-width:90vw;text-align:center}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .promo-line{margin-top:26px;font-size:12px;color:rgba(255,255,255,.55);text-align:center;
+    line-height:1.65;padding:16px;border-top:1px solid rgba(255,255,255,.08)}
+  .promo-line b{color:var(--coral-light);font-weight:900}
+  .promo-line a{color:var(--gold);font-weight:700;text-decoration:none;
+    border-bottom:1px dashed currentColor}
+  @media(max-width:600px){
+    .wrap{padding:16px 12px 80px}
+    .card{padding:22px 18px;border-radius:20px}
+    .question-emoji{font-size:44px}
+    .option-btn{padding:14px 14px;font-size:14px;gap:11px}
+    .option-btn .ob-letter{width:32px;height:32px;font-size:14px}
+    .intro-hero .ih-emoji{font-size:64px}
+    .result-hero .rh-medal{font-size:64px}
+    .top-item{padding:12px;gap:10px;flex-wrap:wrap}
+    .top-item .ti-detail{width:100%;margin-top:6px}
+    .top-item .ti-medal{font-size:22px;width:30px}
+    .start-btn{font-size:16px;padding:16px 20px}
+    .brand-logo{width:38px;height:38px;font-size:18px}
+    .brand-text b{font-size:13.5px}
+    .modal-head{padding:20px 18px 16px}
+    .modal-head h2{font-size:17px}
+    .mh-emoji{font-size:40px}
+    .modal-body{padding:16px 18px 20px}
+    .career-step{min-width:95px}
+    .career-step .cs-num{width:34px;height:34px;font-size:13px}
+    .career-step .cs-title{font-size:10.5px}
+    .salary-row{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="glow g1"></div><div class="glow g2"></div>
+<div id="bgFX" aria-hidden="true"></div><div id="fx"></div><div id="toast"></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="brand-logo">🛎</div>
+      <div class="brand-text"><b>Мягкая математика</b><span>Тест · третичный сектор</span></div>
+    </div>
+  </header>
+  <main id="main"></main>
+  <div class="promo-line">
+    <b>Мягкая математика</b> · проект развития математических способностей ·
+    <a href="https://vk.com/smartskillsmaria" target="_blank" rel="noopener">группа ВК</a> ·
+    <a href="https://vk.com/im/convo/-229273902?entrypoint=community_page&amp;tab=all" target="_blank" rel="noopener">написать Марии Абрамовой</a>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head" id="modalHead">
+      <button class="modal-close" id="modalClose" type="button">✕</button>
+      <div class="mh-emoji" id="mhEmoji">🛎</div>
+      <h2 id="mhTitle">Профессия</h2>
+      <div class="mh-cat" id="mhCat">Категория</div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div class="modal-overlay print-overlay" id="printOverlay">
+  <div class="modal print-modal">
+    <div class="print-actions">
+      <button class="pa-print" id="doPrintBtn" type="button">🖨 Распечатать</button>
+      <button class="pa-close" id="closePrintBtn" type="button">✕ Закрыть</button>
+    </div>
+    <div class="memo-doc" id="memoDoc"></div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {emoji:'🛎', q:'Где тебе было бы приятнее работать?', options:[
+    {text:'В магазине или торговом центре', tags:['trade']},
+    {text:'В кафе или ресторане', tags:['food']},
+    {text:'В поездках: за рулём или в полёте', tags:['transport']},
+    {text:'В отеле или на экскурсиях', tags:['tourism','communication']},
+    {text:'В школе, помогая другим', tags:['education']}
+  ]},
+  {emoji:'💡', q:'Что тебе интереснее всего?', options:[
+    {text:'Помогать людям с выбором', tags:['trade','communication']},
+    {text:'Готовить и придумывать блюда', tags:['food','creativity']},
+    {text:'Помогать тем, кому плохо', tags:['medicine','help']},
+    {text:'Организовывать праздники', tags:['entertainment','creativity']},
+    {text:'Считать и анализировать цифры', tags:['finance','analytics']}
+  ]},
+  {emoji:'👥', q:'Как тебе комфортнее работать?', options:[
+    {text:'Сам по себе, в одиночку', tags:['solo']},
+    {text:'В небольшой команде', tags:['team']},
+    {text:'С большим количеством людей каждый день', tags:['people','communication']},
+    {text:'С одним человеком', tags:['solo','help']}
+  ]},
+  {emoji:'💪', q:'Что у тебя лучше всего получается?', options:[
+    {text:'Общаться и находить общий язык', tags:['communication','people']},
+    {text:'Готовить, шить, делать руками', tags:['food','hands','creativity']},
+    {text:'Считать и планировать', tags:['finance','analytics','planning']},
+    {text:'Помогать и поддерживать', tags:['medicine','help','education']},
+    {text:'Придумывать и развлекать', tags:['entertainment','creativity']}
+  ]},
+  {emoji:'🎯', q:'Что тебя мотивирует?', options:[
+    {text:'Хороший доход и стабильность', tags:['finance','stable']},
+    {text:'Помогать людям', tags:['help','medicine','education']},
+    {text:'Творчество и новые идеи', tags:['creativity','entertainment']},
+    {text:'Общение и новые знакомства', tags:['communication','people']},
+    {text:'Быть полезным в команде', tags:['team','help']}
+  ]},
+  {emoji:'⏰', q:'Какой график тебе подходит?', options:[
+    {text:'Стабильный: 5/2, с 9 до 18', tags:['stable']},
+    {text:'Гибкий: сам выбираю время', tags:['solo','finance']},
+    {text:'Сменный: иногда выходные, иногда будни', tags:['people']},
+    {text:'Работа по выходным и праздникам', tags:['entertainment']},
+    {text:'Сезонный: пики и отдых', tags:['creativity']}
+  ]},
+  {emoji:'🌟', q:'Что из этого тебе ближе?', options:[
+    {text:'Помочь выбрать правильную вещь', tags:['trade','communication']},
+    {text:'Приготовить вкусный торт', tags:['food','creativity']},
+    {text:'Провести экскурсию', tags:['tourism','communication']},
+    {text:'Научить ребёнка чему-то новому', tags:['education','help']},
+    {text:'Провести весёлый праздник', tags:['entertainment','creativity']}
+  ]},
+  {emoji:'💬', q:'Как ты относишься к общению?', options:[
+    {text:'Обожаю много общаться', tags:['communication','people']},
+    {text:'Нравится общаться с небольшой группой', tags:['communication','team']},
+    {text:'Люблю тишину, общение дозировано', tags:['solo']},
+    {text:'Общаюсь только по делу', tags:['solo','analytics']}
+  ]},
+  {emoji:'🚀', q:'Какая у тебя мечта?', options:[
+    {text:'Открыть свой магазин или ресторан', tags:['trade','food','business']},
+    {text:'Помогать людям — в медицине или образовании', tags:['medicine','education','help']},
+    {text:'Работать в финансах и зарабатывать', tags:['finance','analytics']},
+    {text:'Стать известным ведущим или организатором', tags:['entertainment','creativity']},
+    {text:'Работать с туристами по всему миру', tags:['tourism','communication']}
+  ]},
+  {emoji:'✨', q:'Что тебя вдохновляет?', options:[
+    {text:'Улыбки людей, которым я помог', tags:['help','medicine','education']},
+    {text:'Творчество и возможность придумывать', tags:['creativity','food','entertainment']},
+    {text:'Цифры и точные расчёты', tags:['finance','analytics']},
+    {text:'Общение и новые знакомства', tags:['communication','people','trade','tourism']},
+    {text:'Спокойствие и стабильность', tags:['stable','solo']}
+  ]}
+];
+
+const CATEGORIES = {
+  trade:{emoji:'🛒', name:'Торговля', cls:'cat-trade'},
+  food:{emoji:'🍽', name:'Кафе', cls:'cat-food'},
+  transport:{emoji:'🚚', name:'Транспорт', cls:'cat-transport'},
+  tourism:{emoji:'🏨', name:'Туризм', cls:'cat-tourism'},
+  education:{emoji:'🎓', name:'Образование', cls:'cat-education'},
+  medicine:{emoji:'🏥', name:'Медицина', cls:'cat-medicine'},
+  finance:{emoji:'💰', name:'Финансы', cls:'cat-finance'},
+  entertainment:{emoji:'🎉', name:'Развлечения', cls:'cat-entertainment'}
+};
+
+const PROFESSIONS = {
+  seller: {name:'Продавец-консультант', emoji:'🛍', cat:'trade',
+    tags:{trade:3, communication:3, people:2, team:1},
+    why:'Ты любишь общаться и помогать другим с выбором — идеальный набор для продавца-консультанта. Ты умеешь находить общий язык с людьми.',
+    tryIt:'Помоги родителям выбрать товар в магазине и объясни, почему ты выбрал именно этот.',
+    desc:'Продавец-консультант — «гид» по магазину. Он знает всё о товарах, помогает выбрать, отвечает на вопросы, оформляет покупку.',
+    career:[{title:'Стажёр',years:'0–1 год'},{title:'Продавец-консультант',years:'1–3 года'},{title:'Старший продавец',years:'3–5 лет'},{title:'Администратор зала',years:'5+ лет'},{title:'Управляющий магазином',years:'7+ лет'}],
+    salary:{start:'30 000 ₽',mid:'55 000 ₽',senior:'120 000+ ₽'},
+    features:[{icon:'👥',text:'<b>Много общения</b> — каждый день новые люди'},{icon:'📚',text:'<b>Знание товара</b> — нужно разбираться в том, что продаёшь'},{icon:'🏪',text:'<b>Работа в зале</b> — весь день на ногах'}],
+    opportunities:[{icon:'📈',text:'<b>Быстрый рост</b> — от стажёра до управляющего за 5–7 лет'},{icon:'💼',text:'<b>Свой магазин</b> — можно открыть своё дело'},{icon:'💰',text:'<b>Процент с продаж</b> — хорошие продавцы зарабатывают больше'}],
+    risks:[{icon:'😤',text:'<b>Сложные клиенты</b> — иногда приходится терпеть грубость'},{icon:'⏰',text:'<b>Сменный график</b> — выходные не всегда в субботу'},{icon:'📊',text:'<b>План продаж</b> — нужно выполнять норму'}],
+    fact:'Самые лучшие продавцы могут «читать» покупателя за 30 секунд — по взгляду, осанке, скорости шага.'},
+  marketplace: {name:'Менеджер маркетплейса', emoji:'📦', cat:'trade',
+    tags:{trade:2, analytics:2, solo:1, business:2},
+    why:'Ты любишь цифры и хочешь работать в онлайн-торговле — маркетплейсы твоё. Ты можешь вести товары и зарабатывать на этом.',
+    tryIt:'Помоги родителям посмотреть, как выглядит карточка товара на маркетплейсе.',
+    desc:'Менеджер маркетплейса создаёт карточки товаров, следит за ценами, участвует в акциях, отвечает на отзывы.',
+    career:[{title:'Помощник менеджера',years:'0–1 год'},{title:'Менеджер',years:'1–3 года'},{title:'Старший менеджер',years:'3–5 лет'},{title:'Руководитель направления',years:'5+ лет'},{title:'Директор e-commerce',years:'8+ лет'}],
+    salary:{start:'40 000 ₽',mid:'80 000 ₽',senior:'180 000+ ₽'},
+    features:[{icon:'💻',text:'<b>Работа за компьютером</b> — удалённо или в офисе'},{icon:'📊',text:'<b>Аналитика</b> — нужно считать и сравнивать'},{icon:'🎨',text:'<b>Немного дизайна</b> — оформление карточек'}],
+    opportunities:[{icon:'🚀',text:'<b>Быстрорастущая сфера</b> — маркетплейсы растут каждый год'},{icon:'💼',text:'<b>Своё дело</b> — можно продавать свои товары'},{icon:'🌍',text:'<b>Удалённая работа</b> — можно работать из любой точки'}],
+    risks:[{icon:'📉',text:'<b>Зависимость от алгоритмов</b> — правила площадок часто меняются'},{icon:'⚔️',text:'<b>Высокая конкуренция</b> — тысячи продавцов за место'},{icon:'⏰',text:'<b>Сезонные пики</b> — перед праздниками работы в разы больше'}],
+    fact:'В России на маркетплейсах продают <b>более 500 000 предпринимателей</b>.'},
+  chef: {name:'Повар', emoji:'👨‍🍳', cat:'food',
+    tags:{food:3, creativity:2, hands:2, team:2},
+    why:'Ты любишь готовить и придумывать новое — тебе подходит профессия повара. Ты можешь создавать блюда, которые будут радовать людей.',
+    tryIt:'Приготовь что-нибудь по рецепту сам или с родителями.',
+    desc:'Повар готовит блюда по рецептам, придумывает новые, следит за качеством и безопасностью.',
+    career:[{title:'Помощник повара',years:'0–1 год'},{title:'Повар',years:'1–3 года'},{title:'Су-шеф',years:'3–5 лет'},{title:'Шеф-повар',years:'5+ лет'},{title:'Бренд-шеф',years:'10+ лет'}],
+    salary:{start:'35 000 ₽',mid:'70 000 ₽',senior:'200 000+ ₽'},
+    features:[{icon:'🔥',text:'<b>Жарко и быстро</b> — работа на кухне в высоком темпе'},{icon:'🍳',text:'<b>Творчество</b> — можно придумывать новые блюда'},{icon:'👥',text:'<b>Командная работа</b> — кухня как единый механизм'}],
+    opportunities:[{icon:'🌟',text:'<b>Известность</b> — лучшие повара становятся звёздами'},{icon:'💼',text:'<b>Свой ресторан</b> — можно открыть собственное заведение'},{icon:'🌍',text:'<b>Работа за границей</b> — повара нужны везде'}],
+    risks:[{icon:'⏰',text:'<b>Долгие смены</b> — по 10–12 часов на ногах'},{icon:'⚠️',text:'<b>Травмы</b> — порезы, ожоги, ушибы'},{icon:'😤',text:'<b>Стресс</b> — в час пик нужно успевать всё'}],
+    fact:'Каждый день в мире открывается <b>более 1000 новых ресторанов и кафе</b>.'},
+  confectioner: {name:'Кондитер', emoji:'🧁', cat:'food',
+    tags:{food:3, creativity:3, hands:2, solo:1},
+    why:'Ты любишь сладкое и творчество — кондитер идеально подходит. Ты можешь создавать настоящие произведения искусства из тортов.',
+    tryIt:'Испеки печенье с родителями и укрась его.',
+    desc:'Кондитер печёт торты, делает пирожные, украшает десерты. Это и точная наука, и творчество.',
+    career:[{title:'Помощник кондитера',years:'0–1 год'},{title:'Кондитер',years:'1–3 года'},{title:'Старший кондитер',years:'3–5 лет'},{title:'Шеф-кондитер',years:'5+ лет'},{title:'Владелец кондитерской',years:'8+ лет'}],
+    salary:{start:'30 000 ₽',mid:'65 000 ₽',senior:'150 000+ ₽'},
+    features:[{icon:'🎨',text:'<b>Творчество + точность</b> — граммы и секунды важны'},{icon:'🍰',text:'<b>Ранние подъёмы</b> — торты надо готовить с утра'},{icon:'👐',text:'<b>Работа руками</b> — лепка, украшение, выпечка'}],
+    opportunities:[{icon:'💼',text:'<b>Своя кондитерская</b> — можно работать на себя'},{icon:'🌟',text:'<b>Известность</b> — лучшие кондитеры ведут блоги'},{icon:'📈',text:'<b>Растущий спрос</b> — торты на заказ нужны всегда'}],
+    risks:[{icon:'🌡',text:'<b>Жара у печи</b> — работа в горячем цеху'},{icon:'⚠️',text:'<b>Ожоги</b> — печь, карамель, сиропы'},{icon:'📉',text:'<b>Сезонность</b> — перед праздниками работы в разы больше'}],
+    fact:'Самый дорогой торт в мире стоил <b>75 миллионов долларов</b> — его украшали настоящие бриллианты.'},
+  driver: {name:'Водитель', emoji:'🚗', cat:'transport',
+    tags:{transport:3, solo:2, stable:1, hands:1},
+    why:'Ты любишь дорогу и хочешь быть в движении — тебе подходит профессия водителя. Это стабильная работа с хорошим доходом.',
+    tryIt:'Попроси родителей показать, как работает навигатор.',
+    desc:'Водитель перевозит людей, продукты, товары. Может работать в такси, на грузовике, в доставке или личным водителем.',
+    career:[{title:'Помощник водителя',years:'0–1 год'},{title:'Водитель категории B',years:'1–3 года'},{title:'Водитель категории C/E',years:'3–5 лет'},{title:'Старший водитель',years:'5+ лет'},{title:'Логист-экспедитор',years:'8+ лет'}],
+    salary:{start:'35 000 ₽',mid:'70 000 ₽',senior:'150 000+ ₽'},
+    features:[{icon:'🛣',text:'<b>Много времени в пути</b> — иногда целый день за рулём'},{icon:'👥',text:'<b>Общение с людьми</b> — пассажиры или клиенты'},{icon:'🚗',text:'<b>Ответственность</b> — безопасность пассажиров'}],
+    opportunities:[{icon:'💰',text:'<b>Гибкий график</b> — можно работать на себя в такси'},{icon:'🚚',text:'<b>Карьерный рост</b> — от легковой до фуры'},{icon:'🌍',text:'<b>Путешествия</b> — международные рейсы'}],
+    risks:[{icon:'⚠️',text:'<b>Аварии</b> — риск на дороге всегда есть'},{icon:'⏰',text:'<b>Долгие смены</b> — усталость и монотонность'},{icon:'🩺',text:'<b>Здоровье</b> — сидячая работа, нагрузка на спину'}],
+    fact:'В мире <b>более 1,5 миллиарда автомобилей</b>.'},
+  pilot: {name:'Пилот', emoji:'✈️', cat:'transport',
+    tags:{transport:3, team:2, stable:2, risk:1},
+    why:'Ты мечтаешь о небе и хочешь большую ответственность — пилот это твоё. Это престижная профессия с высоким доходом.',
+    tryIt:'Поиграй в авиасимулятор или почитай про самолёты.',
+    desc:'Пилот управляет самолётом, отвечает за безопасность пассажиров и груза. Одна из самых ответственных профессий.',
+    career:[{title:'Курсант училища',years:'0–3 года'},{title:'Второй пилот',years:'3–5 лет'},{title:'Командир ВС',years:'5–10 лет'},{title:'Инструктор',years:'10+ лет'},{title:'Пилот-наставник',years:'15+ лет'}],
+    salary:{start:'150 000 ₽',mid:'350 000 ₽',senior:'700 000+ ₽'},
+    features:[{icon:'✈️',text:'<b>Постоянные полёты</b> — дома бываешь редко'},{icon:'🎓',text:'<b>Долгая учёба</b> — 3–5 лет лётного училища'},{icon:'😴',text:'<b>Сбитый режим</b> — смены в разное время суток'}],
+    opportunities:[{icon:'💰',text:'<b>Высокий доход</b> — одна из самых оплачиваемых профессий'},{icon:'🌍',text:'<b>Путешествия</b> — можно побывать в разных странах'},{icon:'🏆',text:'<b>Престиж</b> — пилот — уважаемая профессия'}],
+    risks:[{icon:'⚠️',text:'<b>Ответственность</b> — за жизни сотен людей'},{icon:'🩺',text:'<b>Здоровье</b> — нужна идеальная медкомиссия'},{icon:'🏠',text:'<b>Долгие разлуки</b> — с семьёй видишься редко'}],
+    fact:'Пилоты гражданской авиации проходят <b>переподготовку каждые 6 месяцев</b>.'},
+  hotelmanager: {name:'Администратор отеля', emoji:'🏨', cat:'tourism',
+    tags:{tourism:2, communication:3, team:2, people:2},
+    why:'Ты любишь общаться и хочешь работать с людьми — администратор отеля это твоё. От тебя зависит первое впечатление о гостинице.',
+    tryIt:'Представь себя на месте администратора: как бы ты встретил гостя?',
+    desc:'Администратор отеля встречает гостей, оформляет заселение, помогает с вопросами и решает проблемы.',
+    career:[{title:'Портье',years:'0–1 год'},{title:'Администратор',years:'1–3 года'},{title:'Старший администратор',years:'3–5 лет'},{title:'Менеджер',years:'5+ лет'},{title:'Управляющий отелем',years:'8+ лет'}],
+    salary:{start:'35 000 ₽',mid:'60 000 ₽',senior:'150 000+ ₽'},
+    features:[{icon:'👥',text:'<b>Постоянное общение</b> — новые гости каждый день'},{icon:'😊',text:'<b>Нужна улыбка</b> — работа требует терпения'},{icon:'🌍',text:'<b>Иностранные гости</b> — нужно знать английский'}],
+    opportunities:[{icon:'📈',text:'<b>Карьера в туризме</b> — от администратора до управляющего'},{icon:'🌍',text:'<b>Работа за границей</b> — отели есть везде'},{icon:'💼',text:'<b>Свой отель</b> — мечта многих'}],
+    risks:[{icon:'😤',text:'<b>Сложные гости</b> — иногда жалуются на всё'},{icon:'⏰',text:'<b>Ночные смены</b> — отель работает круглосуточно'},{icon:'😓',text:'<b>Много на ногах</b> — весь день в движении'}],
+    fact:'В самом большом отеле мира — <b>First World Hotel</b> в Малайзии — 7351 номер.'},
+  guide: {name:'Экскурсовод', emoji:'🗺', cat:'tourism',
+    tags:{tourism:3, communication:3, creativity:2, people:2},
+    why:'Ты любишь истории и общение — экскурсовод это твоё призвание. Ты можешь делать прошлое живым.',
+    tryIt:'Расскажи родителям что-то интересное о месте, где вы живёте.',
+    desc:'Экскурсовод водит туристов по музеям и городам, рассказывает интересные факты, отвечает на вопросы.',
+    career:[{title:'Помощник экскурсовода',years:'0–1 год'},{title:'Экскурсовод',years:'1–3 года'},{title:'Ведущий экскурсовод',years:'3–5 лет'},{title:'Автор экскурсий',years:'5+ лет'},{title:'Руководитель турбюро',years:'8+ лет'}],
+    salary:{start:'25 000 ₽',mid:'50 000 ₽',senior:'120 000+ ₽'},
+    features:[{icon:'🎤',text:'<b>Много говорить</b> — экскурсия длится часами'},{icon:'📚',text:'<b>Знание истории</b> — нужны глубокие знания'},{icon:'🚶',text:'<b>Постоянно на ногах</b> — пешеходные экскурсии'}],
+    opportunities:[{icon:'🎨',text:'<b>Творчество</b> — можно придумывать свои экскурсии'},{icon:'💼',text:'<b>Своё дело</b> — можно вести авторские туры'},{icon:'🌟',text:'<b>Известность</b> — лучшие экскурсоводы популярны'}],
+    risks:[{icon:'🎤',text:'<b>Нагрузка на голос</b> — можно сорвать горло'},{icon:'🌡',text:'<b>Погода</b> — экскурсии на улице в любую погоду'},{icon:'📉',text:'<b>Сезонность</b> — зимой туристов меньше'}],
+    fact:'В Эрмитаже — <b>более 3 миллионов экспонатов</b>. Если смотреть на каждый по минуте — 8 лет без перерыва.'},
+  teacher: {name:'Учитель', emoji:'👩‍🏫', cat:'education',
+    tags:{education:3, help:3, people:2, communication:2},
+    why:'Ты хочешь помогать другим расти и учиться — учитель это твоё. Ты можешь менять жизни учеников.',
+    tryIt:'Объясни младшему брату или сестре что-то, что ты хорошо знаешь.',
+    desc:'Учитель не только объясняет предмет, но и помогает детям расти, учит думать, поддерживает в трудностях.',
+    career:[{title:'Помощник учителя',years:'0–1 год'},{title:'Учитель',years:'1–5 лет'},{title:'Старший учитель',years:'5–10 лет'},{title:'Завуч',years:'10+ лет'},{title:'Директор школы',years:'15+ лет'}],
+    salary:{start:'30 000 ₽',mid:'60 000 ₽',senior:'120 000+ ₽'},
+    features:[{icon:'👥',text:'<b>Работа с детьми</b> — нужно любить и понимать их'},{icon:'📚',text:'<b>Много подготовки</b> — уроки требуют времени'},{icon:'😊',text:'<b>Эмоциональная отдача</b> — видишь, как дети растут'}],
+    opportunities:[{icon:'🎓',text:'<b>Профессиональный рост</b> — можно стать методистом или завучем'},{icon:'💼',text:'<b>Свои курсы</b> — можно вести дополнительные занятия'},{icon:'🌍',text:'<b>Работа за границей</b> — учителя востребованы везде'}],
+    risks:[{icon:'😤',text:'<b>Стресс</b> — много бумажной работы, шумные классы'},{icon:'💸',text:'<b>Невысокие зарплаты</b> — особенно в регионах'},{icon:'🩺',text:'<b>Здоровье</b> — нагрузка на голос, нервы, зрение'}],
+    fact:'Хороший учитель влияет на будущее ученика <b>на десятилетия вперёд</b>.'},
+  tutor: {name:'Репетитор', emoji:'📖', cat:'education',
+    tags:{education:3, help:2, solo:2, analytics:1},
+    why:'Ты любишь объяснять и хочешь работать на себя — репетитор подходит. Ты можешь учить из дома и получать хороший доход.',
+    tryIt:'Попробуй объяснить тему однокласснику.',
+    desc:'Репетитор занимается с учениками, подстраивается под их темп, объясняет сложные темы.',
+    career:[{title:'Начинающий',years:'0–1 год'},{title:'Репетитор',years:'1–3 года'},{title:'Опытный',years:'3–5 лет'},{title:'Автор курсов',years:'5+ лет'},{title:'Владелец школы',years:'8+ лет'}],
+    salary:{start:'30 000 ₽',mid:'70 000 ₽',senior:'200 000+ ₽'},
+    features:[{icon:'🏡',text:'<b>Гибкий график</b> — можно работать из дома'},{icon:'💻',text:'<b>Онлайн или офлайн</b> — можно вести как удобно'},{icon:'📚',text:'<b>Знание предмета</b> — нужно разбираться глубоко'}],
+    opportunities:[{icon:'💼',text:'<b>Своё дело</b> — можно работать на себя'},{icon:'💰',text:'<b>Высокий доход</b> — хорошие репетиторы зарабатывают много'},{icon:'🌍',text:'<b>Онлайн-ученики</b> — можно учить из любой точки'}],
+    risks:[{icon:'📉',text:'<b>Нестабильный доход</b> — зависит от числа учеников'},{icon:'⏰',text:'<b>Вечерние часы</b> — основная работа после школы'},{icon:'😤',text:'<b>Ответственность</b> — родители ждут результата'}],
+    fact:'Самые востребованные репетиторы в России — по <b>математике и английскому</b>. Цены доходят до 5000 ₽ за час.'},
+  doctor: {name:'Врач', emoji:'👨‍⚕️', cat:'medicine',
+    tags:{medicine:3, help:3, science:2, stable:1},
+    why:'Ты хочешь спасать жизни и не боишься долгой учёбы — врач это твоё призвание. Одна из самых важных профессий.',
+    tryIt:'Почитай о первой помощи и запомни основные правила.',
+    desc:'Врач ставит диагнозы, назначает лечение, спасает жизни. Должен быть умным, внимательным и уметь общаться.',
+    career:[{title:'Студент-медик',years:'0–6 лет'},{title:'Ординатор',years:'6–8 лет'},{title:'Врач',years:'8–10 лет'},{title:'Зав. отделением',years:'10+ лет'},{title:'Главный врач',years:'15+ лет'}],
+    salary:{start:'50 000 ₽',mid:'100 000 ₽',senior:'300 000+ ₽'},
+    features:[{icon:'📚',text:'<b>Очень долгая учёба</b> — 6 лет вуза + ординатура'},{icon:'⚕️',text:'<b>Ответственность</b> — за здоровье и жизнь людей'},{icon:'😊',text:'<b>Смысл</b> — видишь, как человек возвращается к жизни'}],
+    opportunities:[{icon:'🏆',text:'<b>Профессиональный рост</b> — от врача до главного врача'},{icon:'💼',text:'<b>Частная практика</b> — можно открыть клинику'},{icon:'🌍',text:'<b>Международная карьера</b> — врачи ценятся везде'}],
+    risks:[{icon:'😢',text:'<b>Эмоциональная нагрузка</b> — не всех удаётся спасти'},{icon:'⏰',text:'<b>Ночные смены</b> — дежурства по 24 часа'},{icon:'⚕️',text:'<b>Риск для здоровья</b> — контакт с болезнями'}],
+    fact:'Хирурги проводят в операционной <b>до 12 часов подряд</b>.'},
+  psychologist: {name:'Психолог', emoji:'🧠', cat:'medicine',
+    tags:{medicine:2, help:3, communication:2, solo:1},
+    why:'Ты умеешь слушать и хочешь помогать другим разбираться с чувствами — психолог это твоё. Ты можешь работать на себя.',
+    tryIt:'Попробуй внимательно выслушать друга, если ему грустно.',
+    desc:'Психолог помогает людям разобраться в чувствах, справиться со стрессом, найти решения в сложных ситуациях.',
+    career:[{title:'Студент',years:'0–5 лет'},{title:'Начинающий',years:'5–7 лет'},{title:'Психолог',years:'7–10 лет'},{title:'Ведущий специалист',years:'10+ лет'},{title:'Руководитель центра',years:'15+ лет'}],
+    salary:{start:'40 000 ₽',mid:'80 000 ₽',senior:'200 000+ ₽'},
+    features:[{icon:'👂',text:'<b>Умение слушать</b> — главный инструмент'},{icon:'🧠',text:'<b>Понимание людей</b> — нужно разбираться в психологии'},{icon:'📚',text:'<b>Постоянное обучение</b> — новые методики каждый год'}],
+    opportunities:[{icon:'💼',text:'<b>Своя практика</b> — можно работать на себя'},{icon:'🌟',text:'<b>Популярность</b> — хорошие психологи на вес золота'},{icon:'🌍',text:'<b>Онлайн-консультации</b> — работа из любой точки'}],
+    risks:[{icon:'😢',text:'<b>Эмоциональное выгорание</b> — чужие проблемы могут давить'},{icon:'📚',text:'<b>Долгая учёба</b> — нужно высшее + развитие'},{icon:'📉',text:'<b>Нестабильный доход</b> — зависит от клиентов'}],
+    fact:'Самый известный психолог — <b>Зигмунд Фрейд</b>. Его идеи обсуждают спустя более 100 лет.'},
+  banker: {name:'Банкир', emoji:'🏦', cat:'finance',
+    tags:{finance:3, analytics:2, stable:2, communication:1},
+    why:'Ты любишь цифры и стабильность — банк это твоё. Ты можешь работать с деньгами и расти в крупной компании.',
+    tryIt:'Заведи копилку и начни считать накопления.',
+    desc:'Банкир выдаёт кредиты, принимает вклады, консультирует клиентов. Работа с деньгами требует точности и доверия.',
+    career:[{title:'Стажёр',years:'0–1 год'},{title:'Специалист',years:'1–3 года'},{title:'Старший специалист',years:'3–5 лет'},{title:'Руководитель отдела',years:'5+ лет'},{title:'Директор отделения',years:'10+ лет'}],
+    salary:{start:'40 000 ₽',mid:'80 000 ₽',senior:'200 000+ ₽'},
+    features:[{icon:'💰',text:'<b>Работа с деньгами</b> — точность и ответственность'},{icon:'👔',text:'<b>Деловой стиль</b> — офис, костюмы, встречи'},{icon:'📊',text:'<b>Аналитика</b> — нужно считать и сравнивать'}],
+    opportunities:[{icon:'📈',text:'<b>Карьерный рост</b> — от стажёра до директора'},{icon:'💰',text:'<b>Бонусы</b> — хорошие банкиры получают премии'},{icon:'🌍',text:'<b>Крупные компании</b> — работа в международных банках'}],
+    risks:[{icon:'⚠️',text:'<b>Ответственность</b> — ошибки в деньгах недопустимы'},{icon:'📉',text:'<b>Кризисы</b> — во время проблем банки сокращают'},{icon:'⏰',text:'<b>Долгие часы</b> — иногда работа до ночи'}],
+    fact:'Самый большой банк в мире — <b>ICBC</b> в Китае. Его активы больше 5 триллионов долларов.'},
+  accountant: {name:'Бухгалтер', emoji:'🧾', cat:'finance',
+    tags:{finance:3, analytics:3, stable:2, solo:2},
+    why:'Ты внимательный и любишь точные расчёты — бухгалтерия подходит. Это стабильная профессия с удалённой работой.',
+    tryIt:'Помоги родителям посчитать семейный бюджет на неделю.',
+    desc:'Бухгалтер ведёт учёт доходов и расходов, платит налоги, готовит отчёты. Каждая компания обязана иметь бухгалтера.',
+    career:[{title:'Помощник',years:'0–1 год'},{title:'Бухгалтер',years:'1–3 года'},{title:'Старший бухгалтер',years:'3–5 лет'},{title:'Главный бухгалтер',years:'5+ лет'},{title:'Финансовый директор',years:'10+ лет'}],
+    salary:{start:'35 000 ₽',mid:'70 000 ₽',senior:'180 000+ ₽'},
+    features:[{icon:'📊',text:'<b>Точность</b> — каждая цифра важна'},{icon:'💻',text:'<b>Работа за компьютером</b> — много программ и таблиц'},{icon:'📅',text:'<b>Дедлайны</b> — отчёты в определённые сроки'}],
+    opportunities:[{icon:'💼',text:'<b>Своё дело</b> — можно вести бухгалтерию нескольких фирм'},{icon:'📈',text:'<b>Карьера</b> — до финансового директора'},{icon:'🏡',text:'<b>Удалённая работа</b> — можно работать из дома'}],
+    risks:[{icon:'⚠️',text:'<b>Ответственность</b> — ошибки дорого стоят'},{icon:'⏰',text:'<b>Пики работы</b> — отчёты раз в квартал, авралы'},{icon:'😴',text:'<b>Монотонность</b> — много однотипной работы'}],
+    fact:'Один бухгалтер может вести <b>до 10 небольших компаний</b> одновременно.'},
+  host: {name:'Ведущий мероприятий', emoji:'🎤', cat:'entertainment',
+    tags:{entertainment:3, creativity:2, communication:3, people:2},
+    why:'Ты любишь быть в центре внимания и веселить других — ведущий это твоё. Ты можешь стать звездой праздников.',
+    tryIt:'Проведи семейный ужин как ведущий — с конкурсами и играми.',
+    desc:'Ведущий ведёт свадьбы, корпоративы, дни рождения, концерты. Нужно работать с публикой, импровизировать.',
+    career:[{title:'Помощник',years:'0–1 год'},{title:'Ведущий',years:'1–3 года'},{title:'Опытный ведущий',years:'3–5 лет'},{title:'Топовый ведущий',years:'5+ лет'},{title:'Организатор событий',years:'8+ лет'}],
+    salary:{start:'20 000 ₽',mid:'60 000 ₽',senior:'300 000+ ₽'},
+    features:[{icon:'🎤',text:'<b>Работа с публикой</b> — нужна харизма и энергия'},{icon:'⏰',text:'<b>Работа по выходным</b> — праздники чаще в субботу'},{icon:'💼',text:'<b>Своё дело</b> — многие работают на себя'}],
+    opportunities:[{icon:'🌟',text:'<b>Известность</b> — топовые ведущие становятся звёздами'},{icon:'💰',text:'<b>Высокий доход</b> — в сезон можно заработать много'},{icon:'🎨',text:'<b>Творчество</b> — каждый праздник уникален'}],
+    risks:[{icon:'📉',text:'<b>Сезонность</b> — доход зависит от сезона'},{icon:'😤',text:'<b>Стресс</b> — нужно всё держать под контролем'},{icon:'🎤',text:'<b>Нагрузка на голос</b> — можно сорвать горло'}],
+    fact:'Хороший ведущий зарабатывает <b>до 500 000 ₽ за один вечер</b>, но до этого уровня доходят единицы.'},
+  animator: {name:'Аниматор', emoji:'🎈', cat:'entertainment',
+    tags:{entertainment:3, creativity:3, people:2, team:1},
+    why:'Ты энергичный и любишь играть с детьми — аниматор это твоё призвание. Ты можешь приносить радость на праздники.',
+    tryIt:'Придумай и проведи игру для младших ребят.',
+    desc:'Аниматор играет с детьми, устраивает конкурсы, переодевается в персонажей. Работа весёлая, но требует энергии.',
+    career:[{title:'Помощник',years:'0–1 год'},{title:'Аниматор',years:'1–2 года'},{title:'Старший аниматор',years:'2–4 года'},{title:'Режиссёр программ',years:'4+ лет'},{title:'Организатор праздников',years:'6+ лет'}],
+    salary:{start:'20 000 ₽',mid:'40 000 ₽',senior:'100 000+ ₽'},
+    features:[{icon:'🎭',text:'<b>Перевоплощение</b> — нужно играть роли'},{icon:'⚡',text:'<b>Много энергии</b> — весь праздник в движении'},{icon:'👶',text:'<b>Работа с детьми</b> — нужно уметь увлечь'}],
+    opportunities:[{icon:'🎨',text:'<b>Творчество</b> — можно придумывать свои программы'},{icon:'💼',text:'<b>Своё агентство</b> — можно открыть праздничное агентство'},{icon:'📈',text:'<b>Рост</b> — от аниматора до организатора'}],
+    risks:[{icon:'😤',text:'<b>Усталость</b> — физически тяжело, особенно с малышами'},{icon:'⏰',text:'<b>Выходные заняты</b> — праздники в субботу-воскресенье'},{icon:'📉',text:'<b>Сезонность</b> — зимой и летом заказов меньше'}],
+    fact:'Детские дни рождения — <b>огромный рынок</b>. В одной Москве ежедневно проходит около 1000 праздников.'}
+};
+
+const TAG_INFO = {
+  trade:{emoji:'🛒', label:'Торговля'},
+  food:{emoji:'🍽', label:'Готовка'},
+  transport:{emoji:'🚚', label:'Транспорт'},
+  tourism:{emoji:'🏨', label:'Туризм'},
+  education:{emoji:'🎓', label:'Обучение'},
+  medicine:{emoji:'🏥', label:'Медицина'},
+  finance:{emoji:'💰', label:'Финансы'},
+  entertainment:{emoji:'🎉', label:'Развлечения'},
+  communication:{emoji:'💬', label:'Общение'},
+  people:{emoji:'👥', label:'Люди'},
+  help:{emoji:'🤝', label:'Помощь'},
+  creativity:{emoji:'🎨', label:'Творчество'},
+  analytics:{emoji:'📊', label:'Аналитика'},
+  hands:{emoji:'🛠', label:'Руки'},
+  solo:{emoji:'🧘', label:'Сам по себе'},
+  team:{emoji:'👥', label:'Команда'},
+  stable:{emoji:'🏠', label:'Стабильность'},
+  business:{emoji:'💼', label:'Своё дело'},
+  planning:{emoji:'📅', label:'Планирование'}
+};
+
+let state = {screen:'intro', currentQ:0, answers:[], tags:{}, results:[], userName:''};
+const $ = id => document.getElementById(id);
+const main = () => $('main');
+
+(function initBG(){
+  const layer = document.getElementById('bgFX');
+  if(!layer) return;
+  try{if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){layer.style.display='none';return}}catch(e){}
+  const SYMBOLS = ['🛎','🛒','🍽','🚚','🏨','🎓','🏥','💰','🎉','☕','🍕','🚕','✈️','📚','🩺','🏦','🎤','🎈','🛍','📦'];
+  const COLORS = ['#ff6b6b','#ff9b9b','#fbbf24','#14b8a6','#a855f7','#ffffff','#3b82f6','#ec4899'];
+  const COUNT = window.innerWidth < 600 ? 16 : 28;
+  const frag = document.createDocumentFragment();
+  for(let i=0;i<COUNT;i++){
+    const wrap = document.createElement('span');
+    wrap.className='bg-item'; wrap.setAttribute('aria-hidden','true');
+    wrap.textContent=SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)];
+    wrap.style.fontSize=(18+Math.random()*30).toFixed(1)+'px';
+    wrap.style.left=(Math.random()*100).toFixed(2)+'vw';
+    wrap.style.color=COLORS[Math.floor(Math.random()*COLORS.length)];
+    wrap.style.setProperty('--op',(0.06+Math.random()*0.10).toFixed(3));
+    wrap.style.setProperty('--dx',(Math.random()*200-100).toFixed(0)+'px');
+    wrap.style.setProperty('--rot',(Math.random()*60-30).toFixed(0)+'deg');
+    const dur=40+Math.random()*50;
+    wrap.style.animationDuration=dur.toFixed(1)+'s';
+    wrap.style.animationDelay=(-Math.random()*dur).toFixed(1)+'s';
+    frag.appendChild(wrap);
+  }
+  layer.appendChild(frag);
+})();
+
+let AC=null;
+function beep(freq=880,dur=0.15,type='sine'){
+  try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended')AC.resume();
+    const o=AC.createOscillator(),g=AC.createGain();
+    o.connect(g);g.connect(AC.destination);
+    o.type=type;o.frequency.value=freq;
+    g.gain.setValueAtTime(0.0001,AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.12,AC.currentTime+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001,AC.currentTime+dur);
+    o.start();o.stop(AC.currentTime+dur+0.02)}catch(e){}
+}
+function soundClick(){beep(660,0.08)}
+function soundOpen(){beep(880,0.12);beep(1100,0.1);setTimeout(()=>beep(1320,0.1),80)}
+function soundSuccess(){beep(880,0.1);setTimeout(()=>beep(1046,0.1),90);setTimeout(()=>beep(1318,0.2),180)}
+
+function confetti(n=30){
+  const emo=['🛎','✨','🎉','🌟','💰','🏅','🎈','🍰','💎','⭐','🎊','🏆'];
+  const fx=$('fx');
+  for(let i=0;i<n;i++){
+    const p=document.createElement('div');
+    p.className='particle'; p.textContent=emo[Math.floor(Math.random()*emo.length)];
+    p.style.left=Math.random()*100+'vw'; p.style.top='-30px';
+    p.style.animationDuration=(1.1+Math.random()*1.2)+'s';
+    p.style.fontSize=(16+Math.random()*18)+'px';
+    fx.appendChild(p); setTimeout(()=>p.remove(),2500);
+  }
+}
+function showToast(msg){
+  const t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._id); t._id=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+function renderIntro(){
+  state = {screen:'intro', currentQ:0, answers:[], tags:{}, results:[], userName:''};
+  main().innerHTML = `
+    <section class="card">
+      <div class="intro-hero">
+        <div class="ih-emoji">🛎</div>
+        <h1>Какая профессия <span>третичного сектора</span> — твоя?</h1>
+        <p>Ответь на <b>10 коротких вопросов</b> — и узнаешь, какие профессии из <b>сферы услуг</b> подходят тебе больше всего. В конце — <b>топ-3</b> из 16 специальностей, диаграмма и печатная памятка.</p>
+      </div>
+      <div class="intro-stats">
+        <div class="stat-card"><span class="sc-emoji">❓</span><div class="sc-num">10</div><div class="sc-label">вопросов</div></div>
+        <div class="stat-card"><span class="sc-emoji">⏱</span><div class="sc-num">3–4</div><div class="sc-label">минуты</div></div>
+        <div class="stat-card"><span class="sc-emoji">🛎</span><div class="sc-num">16</div><div class="sc-label">профессий</div></div>
+      </div>
+      <button class="start-btn" id="startBtn" type="button">🚀 Начать тест</button>
+    </section>`;
+  $('startBtn').addEventListener('click',()=>{soundClick();state.screen='question';state.currentQ=0;renderQuestion()});
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[state.currentQ];
+  const progress = (state.currentQ / QUESTIONS.length) * 100;
+  const letters = ['А','Б','В','Г','Д','Е'];
+  main().innerHTML = `
+    <section class="card">
+      <div class="progress-row">
+        <span>Вопрос ${state.currentQ + 1} из ${QUESTIONS.length}</span>
+        <span class="pr-num">${Math.round(progress)}% пройдено</span>
+      </div>
+      <div class="progress-bar"><div style="width:${progress}%"></div></div>
+      <div class="question-emoji">${q.emoji}</div>
+      <h2 class="question-text">${q.q}</h2>
+      <div class="options" id="options">
+        ${q.options.map((opt,i)=>`
+          <button class="option-btn" data-i="${i}" type="button">
+            <span class="ob-letter">${letters[i]}</span>
+            <span class="ob-text">${opt.text}</span>
+            <span class="ob-arrow">→</span>
+          </button>`).join('')}
+      </div>
+      <div class="back-row">
+        <button class="back-btn" id="backBtn" type="button" ${state.currentQ===0?'disabled':''}>← Назад</button>
+        <span class="back-hint">Выбери один вариант</span>
+      </div>
+    </section>`;
+  document.querySelectorAll('.option-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>handleAnswer(+btn.dataset.i));
+  });
+  $('backBtn').addEventListener('click',()=>{
+    if(state.currentQ>0){
+      soundClick();
+      state.currentQ--;
+      if(state.answers[state.currentQ]){
+        const removed=state.answers[state.currentQ];
+        removed.tags.forEach(t=>{state.tags[t]=(state.tags[t]||0)-1});
+      }
+      state.answers = state.answers.slice(0,state.currentQ);
+      renderQuestion();
+    }
+  });
+}
+
+function handleAnswer(idx){
+  const q = QUESTIONS[state.currentQ];
+  const opt = q.options[idx];
+  soundClick();
+  state.answers[state.currentQ] = {idx, tags: opt.tags};
+  opt.tags.forEach(t=>{state.tags[t]=(state.tags[t]||0)+1});
+  if(state.currentQ < QUESTIONS.length - 1){
+    state.currentQ++;
+    renderQuestion();
+  } else {
+    state.screen = 'result';
+    renderResult();
+  }
+}
+
+function calculateResults(){
+  return Object.entries(PROFESSIONS).map(([id,p])=>{
+    let score = 0;
+    for(const [tag,weight] of Object.entries(p.tags)){
+      score += (state.tags[tag]||0) * weight;
+    }
+    return {id, ...p, score};
+  }).sort((a,b)=>b.score-a.score);
+}
+
+function renderResult(){
+  const results = calculateResults();
+  const topScore = results[0].score || 1;
+  results.forEach(r=>{r.percent = Math.round(r.score/topScore*100)});
+  state.results = results;
+  const top1 = results[0], top2 = results[1], top3 = results[2];
+  const userTags = Object.entries(state.tags).filter(([_,v])=>v>0)
+    .sort((a,b)=>b[1]-a[1]).slice(0,4);
+
+  main().innerHTML = `
+    <section class="card">
+      <div class="result-hero">
+        <div class="rh-medal">🏆</div>
+        <div class="rh-tag">Твой топ-выбор</div>
+        <h2>${top1.name}</h2>
+        <div class="rh-prof">${top1.emoji} ${top1.name}</div>
+        <p class="rh-why">${top1.why}</p>
+      </div>
+      <div class="traits-row">
+        <div class="tr-title">💪 Твои главные сильные стороны:</div>
+        <div class="traits-chips">
+          ${userTags.map(([tag])=>`<span class="trait-chip">${TAG_INFO[tag].emoji} ${TAG_INFO[tag].label}</span>`).join('')}
+        </div>
+      </div>
+      <h3 style="font-size:16px;font-weight:900;color:var(--ink);margin:24px 0 12px">🥇 Ещё две профессии, которые тебе подходят</h3>
+      <div class="top-list">
+        ${[top1,top2,top3].map((p,i)=>`
+          <div class="top-item ${i===0?'first':''}">
+            <div class="ti-medal">${['🥇','🥈','🥉'][i]}</div>
+            <div class="ti-body">
+              <div class="ti-name">${p.emoji} ${p.name}</div>
+              <div class="ti-cat">${CATEGORIES[p.cat].emoji} ${CATEGORIES[p.cat].name}</div>
+              <div class="ti-bar"><div style="width:${p.percent}%"></div></div>
+            </div>
+            <div class="ti-percent">${p.percent}%</div>
+            <button class="ti-detail" data-prof="${p.id}" type="button">Подробнее →</button>
+          </div>`).join('')}
+      </div>
+      <div class="chart-section">
+        <div class="chart-title">📊 Совпадение по всем 16 профессиям</div>
+        <div class="chart-rows">
+          ${results.map((p,i)=>`
+            <div class="chart-row ${i===0?'first':''} ${CATEGORIES[p.cat].cls}" data-prof="${p.id}">
+              <div class="cr-head">
+                <span class="cr-emoji">${p.emoji}</span>
+                <span class="cr-name">${p.name}</span>
+              </div>
+              <div class="cr-percent">${p.percent}%</div>
+              <div class="cr-bar-wrap"><div class="cr-bar" style="width:${p.percent}%"></div></div>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn-print" id="printBtn" type="button">🖨 Памятка с топ-3</button>
+        <button class="btn-secondary" id="retryBtn" type="button">↺ Заново</button>
+        <button class="btn-primary" id="shareBtn" type="button">📋 Скопировать</button>
+      </div>
+    </section>`;
+
+  document.querySelectorAll('[data-prof]').forEach(el=>{
+    el.addEventListener('click',(e)=>{
+      if(e.target.classList.contains('ti-detail'))return;
+      openProfessionModal(el.dataset.prof);
+    });
+  });
+  document.querySelectorAll('.ti-detail').forEach(btn=>{
+    btn.addEventListener('click',(e)=>{e.stopPropagation();openProfessionModal(btn.dataset.prof)});
+  });
+
+  confetti(40);
+  setTimeout(()=>confetti(25),400);
+  soundSuccess();
+
+  setTimeout(()=>{
+    document.querySelectorAll('.cr-bar').forEach(bar=>{
+      const w=bar.style.width; bar.style.width='0';
+      setTimeout(()=>{bar.style.width=w},50);
+    });
+  },200);
+
+  $('retryBtn').addEventListener('click',()=>{soundClick();renderIntro()});
+
+  $('shareBtn').addEventListener('click',()=>{
+    const text = `Мой топ-3 профессии третичного сектора:\n🥇 ${top1.name} (${top1.percent}%)\n🥈 ${top2.name} (${top2.percent}%)\n🥉 ${top3.name} (${top3.percent}%)\n\nПрошёл(ла) тест в «Мягкой математике»`;
+    copyText(text).then(ok=>showToast(ok?'📋 Скопировано!':'Не удалось скопировать'));
+  });
+
+  $('printBtn').addEventListener('click',()=>{
+    soundClick(); openPrintMemo(top1, top2, top3, userTags);
+  });
+}
+
+function openProfessionModal(id){
+  const p = PROFESSIONS[id];
+  if(!p) return;
+  const cat = CATEGORIES[p.cat];
+  $('modalHead').className = 'modal-head ' + cat.cls;
+  $('mhEmoji').textContent = p.emoji;
+  $('mhTitle').textContent = p.name;
+  $('mhCat').textContent = cat.emoji + ' ' + cat.name;
+  $('modalBody').innerHTML = `
+    <div class="m-section">
+      <h3 class="m-section-title icon-about">📖 Что это за профессия</h3>
+      <p class="m-desc">${p.desc}</p>
+    </div>
+    <div class="m-section">
+      <h3 class="m-section-title icon-track">🚀 Карьерный трек</h3>
+      <div class="career-track">
+        ${p.career.map((s,i)=>`<div class="career-step"><div class="cs-num">${i+1}</div><div class="cs-title">${s.title}</div><div class="cs-years">${s.years}</div></div>`).join('')}
+      </div>
+      <div class="salary-row">
+        <div class="salary-card"><div class="sc-label">Старт</div><div class="sc-value">${p.salary.start}</div><div class="sc-sub">в начале пути</div></div>
+        <div class="salary-card"><div class="sc-label">Специалист</div><div class="sc-value">${p.salary.mid}</div><div class="sc-sub">через 3–5 лет</div></div>
+        <div class="salary-card"><div class="sc-label">Эксперт</div><div class="sc-value">${p.salary.senior}</div><div class="sc-sub">через 10+ лет</div></div>
+      </div>
+    </div>
+    <div class="m-section">
+      <h3 class="m-section-title icon-feat">🎯 Особенности</h3>
+      <ul class="m-list feat">${p.features.map(f=>`<li><span class="ml-icon">${f.icon}</span><span class="ml-text">${f.text}</span></li>`).join('')}</ul>
+    </div>
+    <div class="m-section">
+      <h3 class="m-section-title icon-opp">🌟 Возможности</h3>
+      <ul class="m-list opp">${p.opportunities.map(o=>`<li><span class="ml-icon">${o.icon}</span><span class="ml-text">${o.text}</span></li>`).join('')}</ul>
+    </div>
+    <div class="m-section">
+      <h3 class="m-section-title icon-risk">⚠️ Риски</h3>
+      <ul class="m-list risk">${p.risks.map(r=>`<li><span class="ml-icon">${r.icon}</span><span class="ml-text">${r.text}</span></li>`).join('')}</ul>
+    </div>
+    <div class="m-section">
+      <h3 class="m-section-title icon-fact">💡 Интересный факт</h3>
+      <div class="fact-box">${p.fact}</div>
+    </div>
+    <div class="m-section">
+      <h3 class="m-section-title icon-opp">🎯 Попробуй уже сейчас</h3>
+      <div class="fact-box" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-left-color:#16a34a;color:#166534">${p.tryIt}</div>
+    </div>
+    <div class="action-row">
+      <button class="btn-secondary" type="button" onclick="closeModal()">← К результату</button>
+    </div>`;
+  $('modalOverlay').classList.add('open');
+  soundOpen();
+}
+
+function closeModal(){ $('modalOverlay').classList.remove('open'); soundClick(); }
+$('modalClose').addEventListener('click',closeModal);
+$('modalOverlay').addEventListener('click',e=>{if(e.target===$('modalOverlay'))closeModal()});
+
+function openPrintMemo(top1, top2, top3, userTags){
+  const today = new Date();
+  const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  const dateStr = `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()} г.`;
+  const topList = [top1, top2, top3];
+  const medals = ['🥇','🥈','🥉'];
+
+  $('memoDoc').innerHTML = `
+    <div class="memo-header">
+      <div class="memo-brand">Мягкая математика · Профориентация</div>
+      <h1 class="memo-title">Мои профессии будущего</h1>
+      <div class="memo-sub">Персональная памятка · третичный сектор · топ-3</div>
+    </div>
+    <div class="memo-fields">
+      <div class="memo-field">
+        <span class="mf-label">Имя:</span>
+        <span class="mf-line"><input type="text" id="memoName" placeholder="Введи своё имя" maxlength="30"></span>
+      </div>
+      <div class="memo-field">
+        <span class="mf-label">Дата:</span>
+        <span class="mf-line">${dateStr}</span>
+      </div>
+    </div>
+    <h2 class="memo-section-title">🏆 Твой топ-3</h2>
+    <div class="memo-top-list">
+      ${topList.map((p,i)=>`
+        <div class="memo-top-item ${i===0?'first':''}">
+          <div class="mti-medal">${medals[i]}</div>
+          <div class="mti-body">
+            <div class="mti-name">${p.name}</div>
+            <div class="mti-cat">${CATEGORIES[p.cat].emoji} ${CATEGORIES[p.cat].name}</div>
+            <div class="mti-why">${p.why}</div>
+          </div>
+          <div class="mti-percent">${p.percent}%</div>
+        </div>`).join('')}
+    </div>
+    <h2 class="memo-section-title">💪 Твои сильные стороны</h2>
+    <div class="memo-traits">${userTags.map(([tag])=>TAG_INFO[tag].emoji+' '+TAG_INFO[tag].label).join(' · ')}</div>
+    <h2 class="memo-section-title">🎯 Попробуй уже сейчас</h2>
+    <div class="memo-try">
+      <div class="mtry-title">Три маленьких шага:</div>
+      <ul>${topList.map(p=>`<li><b>${p.name}:</b> ${p.tryIt}</li>`).join('')}</ul>
+    </div>
+    <div class="memo-footer">
+      <b>Мягкая математика</b> · проект развития математических способностей<br>
+      группа ВК: vk.com/smartskillsmaria · Мария Абрамова: vk.com/im/convo/-229273902<br>
+      Помни: профессию можно менять. Главное — пробовать и узнавать новое.
+    </div>`;
+
+  $('printOverlay').classList.add('open');
+  soundOpen();
+  $('doPrintBtn').onclick = () => window.print();
+  $('closePrintBtn').onclick = () => { $('printOverlay').classList.remove('open'); soundClick(); };
+
+  setTimeout(()=>{
+    const nameInput = $('memoName');
+    if(nameInput && state.userName) nameInput.value = state.userName;
+    if(nameInput) nameInput.addEventListener('input',e=>{state.userName=e.target.value});
+  },50);
+}
+
+$('printOverlay').addEventListener('click',e=>{
+  if(e.target===$('printOverlay')) $('printOverlay').classList.remove('open');
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if($('modalOverlay').classList.contains('open')) closeModal();
+    if($('printOverlay').classList.contains('open')) $('printOverlay').classList.remove('open');
+  }
+});
+
+function copyText(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text).then(()=>true).catch(()=>fallbackCopy(text));
+  }
+  return Promise.resolve(fallbackCopy(text));
+}
+function fallbackCopy(text){
+  try{
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.left='-9999px';
+    document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta); return ok;
+  }catch(e){return false}
+}
+
+renderIntro();
+</script>
+</body>
+</html>
